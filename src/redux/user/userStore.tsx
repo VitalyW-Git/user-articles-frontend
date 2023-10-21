@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {UserType} from '../../tupes/user/User.type'
 import {AppThunk} from "../index";
 import axios from '../../lib/axios';
@@ -19,7 +19,7 @@ export const UserSlice = createSlice({
   },
 });
 
-export const { addItem } = UserSlice.actions;
+export const {addItem} = UserSlice.actions;
 
 export const actionAuthUser = (): AppThunk =>
   async dispatch => {
@@ -30,13 +30,17 @@ export const actionAuthUser = (): AppThunk =>
       //     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
       //   }
       // };
-      // const data = await axios.get('news/get-all', config);
-      const data = await axios.post('/user/check-user',
-        {},
+      const data = await axios.get('news/get-all',
         {
           withCredentials: true
-        },
+        }
       );
+      // const data = await axios.post('/user/check-user',
+      //   {},
+      //   {
+      //     withCredentials: true
+      //   },
+      // );
       // fetch("http://localhost:3000/news/get-all", {credentials: "include"})
       //   .then(res => res.json())
       //   .then(data => {
