@@ -21,35 +21,43 @@ export const UserSlice = createSlice({
 
 export const {addItem} = UserSlice.actions;
 
-export const actionAuthUser = (): AppThunk =>
+export const actionGetAllNews = (): AppThunk =>
   async dispatch => {
     try {
-      // const config = {
-      //   headers: {
-      //     "Access-Control-Allow-Origin": "*",
-      //     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
-      //   }
-      // };
+      const config = {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+        }
+      };
       const data = await axios.get('news/get-all',
         {
+          ...config,
           withCredentials: true
         }
       );
-      // const data = await axios.post('/user/check-user',
-      //   {},
-      //   {
-      //     withCredentials: true
-      //   },
-      // );
-      // fetch("http://localhost:3000/news/get-all", {credentials: "include"})
-      //   .then(res => res.json())
-      //   .then(data => {
-      //     console.log(JSON.stringify(data))
-      //   })
-      //   .catch(error => {
-      //     console.log(JSON.stringify(error.message))
-      //   })
+      console.log('actionGetAllNews', data)
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
+export const actionAuthUser = (): AppThunk =>
+  async dispatch => {
+    try {
+      const config = {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+        }
+      };
+      const data = await axios.post('/user/check-user',
+        {},
+        {
+          ...config,
+          withCredentials: true
+        },
+      );
       console.log('actionAuthUser', data)
     } catch (error) {
       console.error(error);
