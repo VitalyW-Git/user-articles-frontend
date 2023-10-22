@@ -2,7 +2,9 @@ import React, {useEffect} from "react";
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
 import {actionAllListNews, userSelector} from "../../redux/user/userStore";
 import {NewsAllType} from "../../tupes/news/NewsAll.type";
-import _styles from "../main/Button.module.scss";
+import {Button} from "antd";
+import Add from "../../components/add-news/Add";
+import _styles from "./UserProfile.module.scss";
 
 
 const UserProfile: React.FC = () => {
@@ -11,15 +13,23 @@ const UserProfile: React.FC = () => {
   const fetchData = async () => {
     await dispatch(actionAllListNews());
   };
-  console.log(userNews)
+  const edit = () => {
+    console.log(123)
+  }
   const listNews = userNews?.map((item: NewsAllType) => {
     const startDate = new Date(item.date_start);
       return (
         item.status && (
           <div key={item._id} className={_styles.article}>
-          <span className={_styles.title}>
-            {item.title}
-          </span>
+            <div className={_styles.edit}>
+              <span className={_styles.title}>
+                {item.title}
+              </span>
+              <Button type="primary"
+                      onClick={() => edit()}>
+                Редактировать
+              </Button>
+            </div>
             <span className={_styles.description}>
             {item.description}
           </span>
@@ -37,6 +47,7 @@ const UserProfile: React.FC = () => {
   }, [])
   return (
     <>
+      <Add />
       {userNews.length
         ? (<div className={_styles.content}>
           {listNews}

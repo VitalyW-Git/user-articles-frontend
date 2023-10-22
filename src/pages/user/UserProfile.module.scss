@@ -1,4 +1,3 @@
-
 .content {
   display: flex;
   flex-direction: column;
@@ -15,11 +14,6 @@
       box-shadow: 1px 1px 15px rgba(0,0,0,.1);
       transition: all .3s ease;
     }
-    .title {
-      font-size: 18px;
-      font-weight: 600;
-      text-decoration: underline;
-    }
     .description {
       margin-top: 5px;
       font-size: 16px;
@@ -28,6 +22,16 @@
       font-size: 14px;
       text-align: right;
       color: #9e9e9e;
+    }
+    .edit {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .title {
+        font-size: 18px;
+        font-weight: 600;
+        text-decoration: underline;
+      }
     }
   }
 }
