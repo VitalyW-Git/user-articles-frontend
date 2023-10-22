@@ -3,3 +3,9 @@ export type UserType = {
   email?: string,
   isAuth: boolean,
 }
+
+export type SuccessType = {
+  user?: Omit<UserType, 'isAuth'>,
+  message: string[],
+  success: boolean
+}

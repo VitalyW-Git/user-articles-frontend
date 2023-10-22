@@ -1,0 +1,19 @@
+body {
+  padding: 0;
+  margin: 0;
+  background-color: #F5F5F5;
+}
+.container {
+  max-width: 1400px;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.formRegistration .ant-form-item-label {
+  padding: 0 !important;
+}
+.modalRegistration .ant-modal-close {
+  display: none;
+}

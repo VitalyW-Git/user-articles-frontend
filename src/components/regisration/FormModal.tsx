@@ -1,0 +1,178 @@
+import React, {useEffect, useRef} from "react";
+import _style from "./Registration.module.scss"
+import {Button, Form, Input, Space, message} from 'antd';
+import {useAppDispatch} from "../../hook/redux";
+import {
+  actionAuthorizationUser,
+  actionSaveUser,
+  setIsShowModal,
+  setPropertyForm
+} from "../../redux/form/formStore";
+import {RegistrationUserEnum} from "../../enam/RegistrationUser.enum";
+import type { FormInstance } from 'antd/es/form';
+import {authUser} from "../../redux/user/userStore";
+import {SuccessType} from "../../tupes/user/User.type";
+
+type Props = {
+  formProperty: {
+    username?: string,
+    email: string,
+    password: string
+  },
+  isStateForm: boolean,
+  onChange: () => void,
+}
+
+const FormModal: React.FC<Props> = (props) => {
+  const formRef = useRef<FormInstance>(null);
+  const dispatch = useAppDispatch();
+
+  const messageResponse = (messages: string[]) => {
+    return messages.map((item: string, index: number) => (
+      <ul className={_style.message} key={index}>
+        <li>{item}</li>
+      </ul>
+    ))
+  }
+  const onSaveUser = async () => {
+    // TODO вынести методы
+    if (props.isStateForm) {
+      const {success, user, message: messageRes} = await dispatch(actionAuthorizationUser() as unknown as SuccessType)
+      if (success) {
+        console.log(user)
+        dispatch(authUser({user, success: true}))
+        message.success(messageResponse(messageRes));
+        dispatch(setIsShowModal())
+        return
+      }
+      message.error(messageResponse(messageRes));
+      return
+    }
+    const {success, user, message: messageRes} = await dispatch(actionSaveUser() as unknown as SuccessType)
+    if (success) {
+      console.log(user)
+      dispatch(authUser({user, success: true}))
+      message.success(messageResponse(messageRes));
+      dispatch(setIsShowModal())
+      return
+    }
+    message.error(messageResponse(messageRes));
+    return
+  }
+
+  const onCancelSave = () => {
+    dispatch(setIsShowModal())
+    onReset()
+    props.onChange()
+  }
+  const onFinishFailed = (errorInfo: any) => {
+    console.log('error:', errorInfo);
+  };
+  const onReset = () => {
+    formRef.current?.resetFields();
+  };
+  useEffect(() => {
+    onReset()
+  }, [props.isStateForm])
+
+  const [form] = Form.useForm();
+  return (
+    <Form
+      className={`${_style.form}, formRegistration`}
+      form={form}
+      ref={formRef}
+      name="basic"
+      layout="vertical"
+      style={{ maxWidth: 500 }}
+      onFinish={onSaveUser}
+      onFinishFailed={onFinishFailed}
+      autoComplete="off"
+      initialValues={props.formProperty}
+    >
+      {!props.isStateForm && (<Form.Item
+        className={_style.form__username}
+        label="Имя"
+        name={RegistrationUserEnum.username}
+        rules={[
+          {required: true, message: 'Поле обязательное для заполнения!', type: 'string'},
+          {
+            validator: (_, password) => {
+              if (password.length < 3) {
+                return Promise.reject(new Error('Имя не менее 3-х символов'));
+              }
+              return Promise.resolve();
+            },
+          },
+        ]}
+      >
+        <Input onChange={(e) => {
+          dispatch(setPropertyForm({key: RegistrationUserEnum.username, value: e.target.value}))
+        }}
+        />
+      </Form.Item>)}
+
+      <Form.Item
+        className={_style.form__email}
+        label="E-mail"
+        name={RegistrationUserEnum.email}
+        rules={[
+          {
+            type: 'email',
+            message: 'Введен неверный адрес электронной почты!',
+          },
+          {
+            required: true,
+            message: 'Поле обязательное для заполнения!',
+          },
+        ]}
+      >
+        <Input onChange={(e) => {
+            dispatch(setPropertyForm({key: RegistrationUserEnum.email, value: e.target.value}))
+          }}
+        />
+      </Form.Item>
+
+      <Form.Item
+        className={_style.form__password}
+        label="Пароль"
+        name={RegistrationUserEnum.password}
+        rules={[
+          {required: true, message: 'Поле обязательное для заполнения'},
+          {type: 'string'},
+          {
+            validator: (_, password) => {
+              if (password.length < 3) {
+                return Promise.reject(new Error('Пароль не менее 3-х символов'));
+              }
+              return Promise.resolve();
+            },
+          },
+        ]}
+      >
+        <Input.Password
+          onChange={(e) =>
+              dispatch(setPropertyForm({key: RegistrationUserEnum.password, value: e.target.value})
+            )}
+        />
+      </Form.Item>
+      <div style={{textAlign: 'right'}}>
+        <Form.Item shouldUpdate>
+          {() => (
+            <Space>
+              <Button type="primary"
+                      htmlType="submit"
+              >
+                Сохранить
+              </Button>
+              <Button htmlType="button" onClick={() => onCancelSave()}>
+                Отмена
+              </Button>
+            </Space>
+          )}
+        </Form.Item>
+      </div>
+    </Form>
+  )
+}
+
+export default FormModal

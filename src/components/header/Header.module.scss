@@ -1,0 +1,20 @@
+.header {
+  background: #e5e5e5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 75px;
+  padding: 0 10px;
+}
+
+.avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  &__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0083eb;
+  }
+}

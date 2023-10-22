@@ -1,0 +1,23 @@
+.modalForm {
+  .authUser {
+    font-size: 16px;
+    cursor: pointer;
+    color: #1a73f8;
+  }
+}
+.form {
+  font-size: 14px;
+  &__username,
+  &__email,
+  &__password
+  {
+    margin-bottom: 10px;
+  }
+}
+
+.message {
+  padding-left: 0;
+  li {
+    list-style-type: none;
+  }
+}

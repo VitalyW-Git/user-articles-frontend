@@ -1,9 +1,13 @@
 import { combineReducers, configureStore, ThunkAction } from '@reduxjs/toolkit';
 import { Action } from 'redux';
 import userReducer from './user/userStore';
+import newsReducer from './news/newsStore';
+import formReducer from './form/formStore';
 
 const rootReducer = combineReducers({
-  user: userReducer
+  user: userReducer,
+  news: newsReducer,
+  form: formReducer,
 });
 
 export const setupStore = () => {
@@ -22,4 +26,4 @@ export type AppDispatch = AppStore['dispatch'];
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action>;
 
-export default setupStore();
+export default store;
