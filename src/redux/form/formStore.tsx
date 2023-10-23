@@ -1,21 +1,36 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from "../index";
 import axios from '../../lib/axios';
-import {RegistrationUserEnum} from "../../enam/RegistrationUser.enum";
+import {AuthUserEnum} from "../../enam/AuthUserEnum";
 import {SuccessType} from "../../tupes/user/User.type";
+import {AuthUserEnumEnum} from "../../enam/NewsFormEnum";
 
 type Registration = {
-  username: string,
-  email: string,
-  password: string,
-  isShowModal: boolean,
+  formAuth: {
+    username: string,
+    email: string,
+    password: string,
+    isShowModal: boolean,
+  },
+  formNews: {
+    title: string,
+    description: string,
+    date_start: string,
+  },
 }
 
 const initialState: Registration = {
-  username: '',
-  email: '',
-  password: '',
-  isShowModal: false,
+  formAuth: {
+    username: '',
+    email: '',
+    password: '',
+    isShowModal: false,
+  },
+  formNews: {
+    title: '',
+    description: '',
+    date_start: '',
+  },
 }
 
 export const FormStore = createSlice({
@@ -25,38 +40,56 @@ export const FormStore = createSlice({
     setPropertyForm: (state, {payload}) => {
       console.log(payload)
       switch (payload.key) {
-        case RegistrationUserEnum.username:
-          state.username = payload.value;
+        case AuthUserEnum.username:
+          state.formAuth.username = payload.value;
           break;
-        case RegistrationUserEnum.email:
-          state.email = payload.value;
+        case AuthUserEnum.email:
+          state.formAuth.email = payload.value;
           break;
-        case RegistrationUserEnum.password:
-          state.password = payload.value;
+        case AuthUserEnum.password:
+          state.formAuth.password = payload.value;
+          break;
+        case AuthUserEnumEnum.title:
+          state.formNews.title = payload.value;
+          break;
+        case AuthUserEnumEnum.description:
+          state.formNews.description = payload.value;
+          break;
+        case AuthUserEnumEnum.date_start:
+          state.formNews.date_start = payload.value;
           break;
         default:
           break;
       }
     },
     setIsShowModal: (state) => {
-      console.log(state.isShowModal)
-      state.isShowModal = !state.isShowModal;
+      console.log(state.formAuth.isShowModal)
+      state.formAuth.isShowModal = !state.formAuth.isShowModal;
     },
     resetProperty: (state) => {
-      state.username = ''
-      state.email = ''
-      state.password = ''
+      state.formAuth.username = ''
+      state.formAuth.email = ''
+      state.formAuth.password = ''
+      state.formNews.title = ''
+      state.formNews.description = ''
+      state.formNews.date_start = ''
+
     }
   },
 });
 export const formSelector = (state: RootState) => state.form;
 export const {setPropertyForm, setIsShowModal, resetProperty} = FormStore.actions;
 
+/** AUTH start */
 export const actionSaveUser = (): AppThunk =>
   async (dispatch, getState): Promise<SuccessType> => {
     try {
       const state: RootState = getState();
-      const loginProperty = {username: state.form.username, email: state.form.email, password: state.form.password}
+      const loginProperty = {
+        username: state.form.formAuth.username,
+        email: state.form.formAuth.email,
+        password: state.form.formAuth.password
+      }
       const {data, status} = await axios.post('/auth/registration',
         loginProperty
       );
@@ -79,7 +112,7 @@ export const actionAuthorizationUser = (): AppThunk =>
   async (dispatch, getState): Promise<SuccessType> => {
     try {
       const state: RootState = getState();
-      const loginProperty = {email: state.form.email, password: state.form.password}
+      const loginProperty = {email: state.form.formAuth.email, password: state.form.formAuth.password}
       const {data, status} = await axios.post('/auth/login',
         loginProperty
       );
@@ -96,6 +129,7 @@ export const actionAuthorizationUser = (): AppThunk =>
       return {message: ['Ошибка при отправке данных'], success: false}
     }
   }
+/** AUTH end */
 
 export default FormStore.reducer;
 

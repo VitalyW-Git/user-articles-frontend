@@ -2,6 +2,7 @@ import React from "react";
 import {PlusOutlined} from "@ant-design/icons";
 import {Collapse} from "antd";
 import _styles from "./Add.module.scss";
+import FormNews from "./form/FormNews";
 
 
 const Add: React.FC = () => {
@@ -18,9 +19,7 @@ const Add: React.FC = () => {
             Добавить запись
           </div>,
         children:
-          <>
-            8788878
-          </>,
+          <FormNews />,
         showArrow: false,
       }]}
     />

@@ -11,9 +11,10 @@ body {
   margin-left: auto;
 }
 
-.formRegistration .ant-form-item-label {
+.formAuth .ant-form-item-label,
+.formNews .ant-form-item-label {
   padding: 0 !important;
 }
-.modalRegistration .ant-modal-close {
+.modalAuth .ant-modal-close {
   display: none;
 }

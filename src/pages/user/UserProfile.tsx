@@ -1,4 +1,5 @@
 import React, {useEffect} from "react";
+import { useNavigate } from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
 import {actionAllListNews, userSelector} from "../../redux/user/userStore";
 import {NewsAllType} from "../../tupes/news/NewsAll.type";
@@ -8,9 +9,14 @@ import _styles from "./UserProfile.module.scss";
 
 
 const UserProfile: React.FC = () => {
-  const {userNews} = useAppSelector(userSelector)
+  const {userNews, isLoading, user} = useAppSelector(userSelector)
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const fetchData = async () => {
+    if (!isLoading && !user.isAuth) {
+      navigate('/', { replace: true });
+      return
+    }
     await dispatch(actionAllListNews());
   };
   const edit = () => {
@@ -39,12 +45,11 @@ const UserProfile: React.FC = () => {
           </div>
         )
       );
-
   });
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [isLoading])
   return (
     <>
       <Add />

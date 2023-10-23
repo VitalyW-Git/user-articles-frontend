@@ -18,7 +18,7 @@ const Registration: React.FC = () => {
       email: "",
       password: "",
     }
-  const {isShowModal} = useAppSelector(formSelector)
+  const {formAuth} = useAppSelector(formSelector)
   const dispatch = useAppDispatch();
   const changeStateForm = () => {
     setIsStateForm(!isStateForm)
@@ -30,9 +30,9 @@ const Registration: React.FC = () => {
 
   return (
     <Modal
-      className={`${_style.modalForm} modalRegistration`}
+      className={`${_style.modalForm} modalAuth`}
       title={isStateForm ? "Войти" : "Регистрация"}
-      open={isShowModal}
+      open={formAuth.isShowModal}
       footer={[]}
     >
       <FormModal

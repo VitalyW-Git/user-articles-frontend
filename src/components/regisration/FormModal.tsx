@@ -8,7 +8,7 @@ import {
   setIsShowModal,
   setPropertyForm
 } from "../../redux/form/formStore";
-import {RegistrationUserEnum} from "../../enam/RegistrationUser.enum";
+import {AuthUserEnum} from "../../enam/AuthUserEnum";
 import type { FormInstance } from 'antd/es/form';
 import {authUser} from "../../redux/user/userStore";
 import {SuccessType} from "../../tupes/user/User.type";
@@ -25,6 +25,8 @@ type Props = {
 
 const FormModal: React.FC<Props> = (props) => {
   const formRef = useRef<FormInstance>(null);
+  const [form] = Form.useForm();
+
   const dispatch = useAppDispatch();
 
   const messageResponse = (messages: string[]) => {
@@ -75,10 +77,9 @@ const FormModal: React.FC<Props> = (props) => {
     onReset()
   }, [props.isStateForm])
 
-  const [form] = Form.useForm();
   return (
     <Form
-      className={`${_style.form}, formRegistration`}
+      className={`${_style.form}, formAuth`}
       form={form}
       ref={formRef}
       name="basic"
@@ -92,7 +93,7 @@ const FormModal: React.FC<Props> = (props) => {
       {!props.isStateForm && (<Form.Item
         className={_style.form__username}
         label="Имя"
-        name={RegistrationUserEnum.username}
+        name={AuthUserEnum.username}
         rules={[
           {required: true, message: 'Поле обязательное для заполнения!', type: 'string'},
           {
@@ -106,7 +107,7 @@ const FormModal: React.FC<Props> = (props) => {
         ]}
       >
         <Input onChange={(e) => {
-          dispatch(setPropertyForm({key: RegistrationUserEnum.username, value: e.target.value}))
+          dispatch(setPropertyForm({key: AuthUserEnum.username, value: e.target.value}))
         }}
         />
       </Form.Item>)}
@@ -114,7 +115,7 @@ const FormModal: React.FC<Props> = (props) => {
       <Form.Item
         className={_style.form__email}
         label="E-mail"
-        name={RegistrationUserEnum.email}
+        name={AuthUserEnum.email}
         rules={[
           {
             type: 'email',
@@ -127,7 +128,7 @@ const FormModal: React.FC<Props> = (props) => {
         ]}
       >
         <Input onChange={(e) => {
-            dispatch(setPropertyForm({key: RegistrationUserEnum.email, value: e.target.value}))
+            dispatch(setPropertyForm({key: AuthUserEnum.email, value: e.target.value}))
           }}
         />
       </Form.Item>
@@ -135,7 +136,7 @@ const FormModal: React.FC<Props> = (props) => {
       <Form.Item
         className={_style.form__password}
         label="Пароль"
-        name={RegistrationUserEnum.password}
+        name={AuthUserEnum.password}
         rules={[
           {required: true, message: 'Поле обязательное для заполнения'},
           {type: 'string'},
@@ -151,7 +152,7 @@ const FormModal: React.FC<Props> = (props) => {
       >
         <Input.Password
           onChange={(e) =>
-              dispatch(setPropertyForm({key: RegistrationUserEnum.password, value: e.target.value})
+              dispatch(setPropertyForm({key: AuthUserEnum.password, value: e.target.value})
             )}
         />
       </Form.Item>

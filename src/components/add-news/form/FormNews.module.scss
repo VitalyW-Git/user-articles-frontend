@@ -1,0 +1,10 @@
+.form {
+  .requiredFields {
+    &__title {
+      max-width: 300px;
+    }
+    &__description {
+      max-width: 700px;
+    }
+  }
+}
