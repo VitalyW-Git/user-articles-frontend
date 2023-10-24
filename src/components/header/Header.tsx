@@ -30,7 +30,7 @@ const Header: React.FC = () => {
         {!isLoading && !user.isAuth && (
           <>
             <Button type="primary"
-                    onClick={() => dispatch(setIsShowModal())}>
+                    onClick={() => dispatch(setIsShowModal({key: 'auth'}))}>
               Войти
             </Button>
             <Registration/>

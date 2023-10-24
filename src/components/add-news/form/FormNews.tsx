@@ -1,11 +1,15 @@
-import React, {useState} from "react";
-import {Button, DatePicker, Form, Input} from 'antd';
+import React, {useRef} from "react";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import _styles from './FormNews.module.scss'
-import {setPropertyForm} from "../../../redux/form/formStore";
+import {Button, DatePicker, Form, Input, message, Space} from 'antd';
+import {actionCreateNews, setIsShowModal, setPropertyForm} from "../../../redux/form/formStore";
 import {useAppDispatch} from "../../../hook/redux";
 import {AuthUserEnumEnum} from "../../../enam/NewsFormEnum";
+import {ResponseNewsType} from "../../../tupes/news/News.type";
+import MessageList from "../../message/MessageList";
+import type { FormInstance } from 'antd/es/form';
+import {addNews} from "../../../redux/user/userStore";
 
 const modules = {
   toolbar: [
@@ -27,6 +31,7 @@ const modules = {
 }
 
 const FormNews: React.FC = () => {
+  const formRef = useRef<FormInstance>(null);
   const [form] = Form.useForm();
   const dispatch = useAppDispatch();
 
@@ -43,21 +48,38 @@ const FormNews: React.FC = () => {
     dispatch(setPropertyForm({key: AuthUserEnumEnum.date_start, value: value.toISOString()}))
   }
 
-  const onSaveUser = (values: any) => {
-    console.log('Success:', values);
+  const onSaveNews = async () => {
+    const {news, message: messageRes, success} = await dispatch(actionCreateNews() as unknown as ResponseNewsType)
+    if (success) {
+      dispatch(addNews(news))
+      message.success(<MessageList messages={messageRes}/>);
+      dispatch(setIsShowModal({key: 'news'}))
+      onReset()
+      return
+    }
+    message.error(<MessageList messages={messageRes}/>);
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
 
+  const onCancelSave = () => {
+    onReset()
+    dispatch(setIsShowModal({key: 'news'}))
+  }
+  const onReset = () => {
+    formRef.current?.resetFields();
+  };
+
   return (
     <Form
       className={`${_styles.form} formNews`}
       form={form}
+      ref={formRef}
       name="basic"
       layout="vertical"
-      onFinish={onSaveUser}
+      onFinish={onSaveNews}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
       initialValues={{
@@ -126,11 +148,22 @@ const FormNews: React.FC = () => {
         </Form.Item>
       </div>
 
-      <Form.Item wrapperCol={{offset: 8, span: 16}}>
-        <Button type="primary" htmlType="submit">
-          Опубликовать
-        </Button>
-      </Form.Item>
+      <div style={{textAlign: 'right'}}>
+        <Form.Item shouldUpdate>
+          {() => (
+            <Space>
+              <Button type="primary"
+                      htmlType="submit"
+              >
+                Опубликовать
+              </Button>
+              <Button htmlType="button" onClick={() => onCancelSave()}>
+                Отмена
+              </Button>
+            </Space>
+          )}
+        </Form.Item>
+      </div>
     </Form>
   )
 }

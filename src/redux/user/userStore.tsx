@@ -2,12 +2,12 @@ import {createSlice} from '@reduxjs/toolkit';
 import {UserType} from '../../tupes/user/User.type'
 import {AppThunk, RootState} from "../index";
 import axios from '../../lib/axios';
-import {NewsAllType} from "../../tupes/news/NewsAll.type";
+import {NewsType} from "../../tupes/news/News.type";
 
 type UserData = {
   user: UserType,
   isLoading: boolean,
-  userNews: NewsAllType[]
+  userNews: NewsType[]
 }
 
 const initialState: UserData = {
@@ -25,12 +25,18 @@ export const UserStore = createSlice({
       state.isLoading = false;
     },
     userNews: (state, {payload}) => {
-      state.userNews = payload.news;
+      if (!payload.news?.length) {
+        return
+      }
+      state.userNews = payload.news?.sort((a: {date_start: string}, b: {date_start: string}) => new Date(b.date_start).getTime() - new Date(a.date_start).getTime());
+    },
+    addNews: (state, {payload}) => {
+      state.userNews.unshift(payload)
     },
   },
 });
 export const userSelector = (state: RootState) => state.user;
-export const {authUser, userNews} = UserStore.actions;
+export const {authUser, userNews, addNews} = UserStore.actions;
 
 export const actionAuthUser = (): AppThunk =>
   async (dispatch): Promise<void> => {

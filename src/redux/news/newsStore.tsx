@@ -1,10 +1,10 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from "../index";
 import axios from '../../lib/axios';
-import {NewsAllType} from "../../tupes/news/NewsAll.type";
+import {NewsType} from "../../tupes/news/News.type";
 
 type NewsLis = {
-  news: NewsAllType[]
+  news: NewsType[]
   successNews: boolean
 }
 

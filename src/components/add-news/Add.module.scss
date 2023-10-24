@@ -1,11 +1,5 @@
-.section {
+.btnCreate {
   margin-top: 10px;
-  font-size: 16px;
-  background: white;
-  border-radius: 11px;
-  &__add {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  display: flex;
+  align-items: center;
 }

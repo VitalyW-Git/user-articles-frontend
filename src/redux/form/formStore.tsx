@@ -2,24 +2,30 @@ import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from "../index";
 import axios from '../../lib/axios';
 import {AuthUserEnum} from "../../enam/AuthUserEnum";
-import {SuccessType} from "../../tupes/user/User.type";
+import {ResponseAuthType} from "../../tupes/user/User.type";
 import {AuthUserEnumEnum} from "../../enam/NewsFormEnum";
+import {ResponseNewsType} from "../../tupes/news/News.type";
 
-type Registration = {
-  formAuth: {
-    username: string,
-    email: string,
-    password: string,
-    isShowModal: boolean,
-  },
-  formNews: {
-    title: string,
-    description: string,
-    date_start: string,
-  },
+type FormAuthType = {
+  username: string,
+  email: string,
+  password: string,
+  isShowModal: boolean,
+}
+type FormNewsType = {
+  title: string,
+  description: string,
+  date_start?: string,
+  isShowModalNews?: boolean,
 }
 
-const initialState: Registration = {
+
+type FormType = {
+  formAuth: FormAuthType,
+  formNews: FormNewsType,
+}
+
+const initialState: FormType = {
   formAuth: {
     username: '',
     email: '',
@@ -30,6 +36,7 @@ const initialState: Registration = {
     title: '',
     description: '',
     date_start: '',
+    isShowModalNews: false,
   },
 }
 
@@ -62,9 +69,17 @@ export const FormStore = createSlice({
           break;
       }
     },
-    setIsShowModal: (state) => {
-      console.log(state.formAuth.isShowModal)
-      state.formAuth.isShowModal = !state.formAuth.isShowModal;
+    setIsShowModal: (state, {payload}) => {
+      switch (payload.key) {
+        case 'auth':
+          state.formAuth.isShowModal = !state.formAuth.isShowModal;
+          break;
+        case 'news':
+          state.formNews.isShowModalNews = !state.formNews.isShowModalNews;
+          break;
+        default:
+          break;
+      }
     },
     resetProperty: (state) => {
       state.formAuth.username = ''
@@ -82,7 +97,7 @@ export const {setPropertyForm, setIsShowModal, resetProperty} = FormStore.action
 
 /** AUTH start */
 export const actionSaveUser = (): AppThunk =>
-  async (dispatch, getState): Promise<SuccessType> => {
+  async (dispatch, getState): Promise<ResponseAuthType> => {
     try {
       const state: RootState = getState();
       const loginProperty = {
@@ -109,10 +124,13 @@ export const actionSaveUser = (): AppThunk =>
   }
 
 export const actionAuthorizationUser = (): AppThunk =>
-  async (dispatch, getState): Promise<SuccessType> => {
+  async (dispatch, getState): Promise<ResponseAuthType> => {
     try {
       const state: RootState = getState();
-      const loginProperty = {email: state.form.formAuth.email, password: state.form.formAuth.password}
+      const loginProperty = {
+        email: state.form.formAuth.email, 
+        password: state.form.formAuth.password
+      }
       const {data, status} = await axios.post('/auth/login',
         loginProperty
       );
@@ -130,6 +148,38 @@ export const actionAuthorizationUser = (): AppThunk =>
     }
   }
 /** AUTH end */
+
+/** NEWS start */
+export const actionCreateNews = (): AppThunk =>
+  async (dispatch, getState): Promise<ResponseNewsType> => {
+    try {
+      const state: RootState = getState();
+      let loginProperty: FormNewsType = {
+        title: state.form.formNews.title, 
+        description: state.form.formNews.description
+      }
+      if (state.form.formNews.date_start?.length) {
+        loginProperty = {
+          ...loginProperty,
+          date_start: state.form.formNews.date_start
+        }
+      }
+      const {data, status} = await axios.post('/news/create',
+        loginProperty
+      );
+      if (status === (200 || 201) && data?.success) {
+        return {news: data.news, message: data.message, success: data.success}
+      }
+      return {message: data.message, success: false}
+    } catch (error: any) {
+      const {message, success} = error.response.data
+      if (!success) {
+        return {message, success: false}
+      }
+      return {message: ['Ошибка при отправке данных'], success: false}
+    }
+  }
+/** NEWS end */
 
 export default FormStore.reducer;
 

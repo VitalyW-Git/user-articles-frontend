@@ -2,7 +2,8 @@ import React, {useEffect} from "react";
 import _styles from "./Button.module.scss"
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
 import {actionGetAllNews, newsSelector} from "../../redux/news/newsStore";
-import {NewsAllType} from "../../tupes/news/NewsAll.type";
+import {NewsType} from "../../tupes/news/News.type";
+
 
 
 const Main: React.FC = () => {
@@ -11,9 +12,10 @@ const Main: React.FC = () => {
   const fetchData = async () => {
     await dispatch(actionGetAllNews());
   };
-  const listNews = news?.map((item: NewsAllType) => {
+  const listNews = news?.map((item: NewsType) => {
     const startDate = new Date(item.date_start);
     const currentDate = new Date();
+    const publicDate = `${startDate.getHours()} ч. ${startDate.getMinutes()} мин. ${startDate.toLocaleDateString('ru-RU')}`
     if (currentDate > startDate) {
       return (
         item.status && (
@@ -21,11 +23,9 @@ const Main: React.FC = () => {
           <span className={_styles.title}>
             {item.title}
           </span>
-            <span className={_styles.description}>
-            {item.description}
-          </span>
+            <span className={_styles.description} dangerouslySetInnerHTML={{ __html: item.description }} />
             <span className={_styles.date}>
-              {startDate.toLocaleDateString('ru-RU')}
+              {publicDate}
             </span>
           </div>
         )

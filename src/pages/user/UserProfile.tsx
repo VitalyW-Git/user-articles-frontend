@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
 import {actionAllListNews, userSelector} from "../../redux/user/userStore";
-import {NewsAllType} from "../../tupes/news/NewsAll.type";
+import {NewsType} from "../../tupes/news/News.type";
 import {Button} from "antd";
 import Add from "../../components/add-news/Add";
 import _styles from "./UserProfile.module.scss";
@@ -22,8 +22,9 @@ const UserProfile: React.FC = () => {
   const edit = () => {
     console.log(123)
   }
-  const listNews = userNews?.map((item: NewsAllType) => {
+  const listNews = userNews?.map((item: NewsType) => {
     const startDate = new Date(item.date_start);
+    const publicDate = `${startDate.getHours()} ч. ${startDate.getMinutes()} мин. ${startDate.toLocaleDateString('ru-RU')}`
       return (
         item.status && (
           <div key={item._id} className={_styles.article}>
@@ -36,11 +37,9 @@ const UserProfile: React.FC = () => {
                 Редактировать
               </Button>
             </div>
-            <span className={_styles.description}>
-            {item.description}
-          </span>
+            <span className={_styles.description} dangerouslySetInnerHTML={{ __html: item.description }} />
             <span className={_styles.date}>
-              {startDate.toLocaleDateString('ru-RU')}
+              {publicDate}
             </span>
           </div>
         )

@@ -11,7 +11,8 @@ import {
 import {AuthUserEnum} from "../../enam/AuthUserEnum";
 import type { FormInstance } from 'antd/es/form';
 import {authUser} from "../../redux/user/userStore";
-import {SuccessType} from "../../tupes/user/User.type";
+import {ResponseAuthType} from "../../tupes/user/User.type";
+import MessageList from "../message/MessageList";
 
 type Props = {
   formProperty: {
@@ -29,41 +30,34 @@ const FormModal: React.FC<Props> = (props) => {
 
   const dispatch = useAppDispatch();
 
-  const messageResponse = (messages: string[]) => {
-    return messages.map((item: string, index: number) => (
-      <ul className={_style.message} key={index}>
-        <li>{item}</li>
-      </ul>
-    ))
-  }
   const onSaveUser = async () => {
     // TODO вынести методы
     if (props.isStateForm) {
-      const {success, user, message: messageRes} = await dispatch(actionAuthorizationUser() as unknown as SuccessType)
+      const {success, user, message: messageRes} = await dispatch(actionAuthorizationUser() as unknown as ResponseAuthType)
       if (success) {
-        console.log(user)
         dispatch(authUser({user, success: true}))
-        message.success(messageResponse(messageRes));
-        dispatch(setIsShowModal())
+        message.success(<MessageList messages={messageRes}/>);
+        onReset()
+        dispatch(setIsShowModal({key: 'auth'}))
         return
       }
-      message.error(messageResponse(messageRes));
+      message.error(<MessageList messages={messageRes}/>);
       return
     }
-    const {success, user, message: messageRes} = await dispatch(actionSaveUser() as unknown as SuccessType)
+    const {success, user, message: messageRes} = await dispatch(actionSaveUser() as unknown as ResponseAuthType)
     if (success) {
       console.log(user)
       dispatch(authUser({user, success: true}))
-      message.success(messageResponse(messageRes));
-      dispatch(setIsShowModal())
+      message.success(<MessageList messages={messageRes}/>);
+      dispatch(setIsShowModal({key: 'auth'}))
       return
     }
-    message.error(messageResponse(messageRes));
+    message.error(<MessageList messages={messageRes}/>);
     return
   }
 
   const onCancelSave = () => {
-    dispatch(setIsShowModal())
+    dispatch(setIsShowModal({key: 'auth'}))
     onReset()
     props.onChange()
   }
