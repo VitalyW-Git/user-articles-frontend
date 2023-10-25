@@ -3,13 +3,20 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import _styles from './FormNews.module.scss'
 import {Button, DatePicker, Form, Input, message, Space} from 'antd';
-import {actionCreateNews, setIsShowModal, setPropertyForm} from "../../../redux/form/formStore";
-import {useAppDispatch} from "../../../hook/redux";
+import {
+  actionCreateNews,
+  actionEditNews,
+  formSelector, resetProperty,
+  setIsShowModal,
+  setPropertyForm
+} from "../../../redux/form/formStore";
+import {useAppDispatch, useAppSelector} from "../../../hook/redux";
 import {AuthUserEnumEnum} from "../../../enam/NewsFormEnum";
 import {ResponseNewsType} from "../../../tupes/news/News.type";
 import MessageList from "../../message/MessageList";
 import type { FormInstance } from 'antd/es/form';
-import {addNews} from "../../../redux/user/userStore";
+import {addNews, updateNews} from "../../../redux/user/userStore";
+
 
 const modules = {
   toolbar: [
@@ -30,7 +37,13 @@ const modules = {
   },
 }
 
-const FormNews: React.FC = () => {
+type Props = {
+  isEdit: boolean
+  nameCancel: string
+}
+
+const FormNews: React.FC<Props> = (props) => {
+  const {formNews} = useAppSelector(formSelector)
   const formRef = useRef<FormInstance>(null);
   const [form] = Form.useForm();
   const dispatch = useAppDispatch();
@@ -40,7 +53,6 @@ const FormNews: React.FC = () => {
   }
 
   const onChangeDateStart = (value: any) => {
-    console.log(value)
     if (value == null) {
       dispatch(setPropertyForm({key: AuthUserEnumEnum.date_start, value: ''}))
       return
@@ -49,12 +61,22 @@ const FormNews: React.FC = () => {
   }
 
   const onSaveNews = async () => {
-    const {news, message: messageRes, success} = await dispatch(actionCreateNews() as unknown as ResponseNewsType)
+    if (props.isEdit) {
+      const {news, message: messageRes, success} = await dispatch(actionCreateNews() as unknown as ResponseNewsType)
+      if (success) {
+        dispatch(addNews(news))
+        message.success(<MessageList messages={messageRes}/>);
+        onCancel()
+        return
+      }
+      message.error(<MessageList messages={messageRes}/>);
+      return
+    }
+    const {news, message: messageRes, success} = await dispatch(actionEditNews() as unknown as ResponseNewsType)
     if (success) {
-      dispatch(addNews(news))
+      dispatch(updateNews(news))
       message.success(<MessageList messages={messageRes}/>);
-      dispatch(setIsShowModal({key: 'news'}))
-      onReset()
+      onCancel()
       return
     }
     message.error(<MessageList messages={messageRes}/>);
@@ -64,9 +86,10 @@ const FormNews: React.FC = () => {
     console.log('Failed:', errorInfo);
   };
 
-  const onCancelSave = () => {
+  const onCancel = () => {
+    dispatch(setIsShowModal({key: props.nameCancel}))
+    dispatch(resetProperty())
     onReset()
-    dispatch(setIsShowModal({key: 'news'}))
   }
   const onReset = () => {
     formRef.current?.resetFields();
@@ -77,14 +100,14 @@ const FormNews: React.FC = () => {
       className={`${_styles.form} formNews`}
       form={form}
       ref={formRef}
-      name="basic"
+      name={`${props.nameCancel}_basic`}
       layout="vertical"
       onFinish={onSaveNews}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
       initialValues={{
-        title: '',
-        description: '',
+        title: formNews.title,
+        description: formNews.description,
         date_start: '',
       }}
     >
@@ -136,7 +159,7 @@ const FormNews: React.FC = () => {
           />
         </Form.Item>
       </div>
-      <div className={_styles.optionalFields}>
+      {props.isEdit && (<div className={_styles.optionalFields}>
         <Form.Item
           label="Дата публикации"
           name="date_start"
@@ -146,7 +169,7 @@ const FormNews: React.FC = () => {
             onChange={onChangeDateStart}
           />
         </Form.Item>
-      </div>
+      </div>)}
 
       <div style={{textAlign: 'right'}}>
         <Form.Item shouldUpdate>
@@ -157,7 +180,7 @@ const FormNews: React.FC = () => {
               >
                 Опубликовать
               </Button>
-              <Button htmlType="button" onClick={() => onCancelSave()}>
+              <Button htmlType="button" onClick={() => onCancel()}>
                 Отмена
               </Button>
             </Space>

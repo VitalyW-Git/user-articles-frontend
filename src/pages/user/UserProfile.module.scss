@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   .article {
-    cursor: pointer;
     margin-top: 20px;
     display: flex;
     flex-direction: column;
@@ -28,9 +27,25 @@
       align-items: center;
       justify-content: space-between;
       .title {
-        font-size: 18px;
-        font-weight: 600;
-        text-decoration: underline;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        &__marker {
+          border-radius: 10px;
+          background: #f35a5a;
+          color: #fff;
+          padding: 5px;
+          text-align: center;
+        }
+        &__name {
+          font-size: 18px;
+          font-weight: 600;
+          text-decoration: underline;
+        }
+      }
+      &__btn {
+        display: flex;
+        align-items: center;
       }
     }
   }

@@ -3,7 +3,8 @@ export type NewsType = {
   title: string,
   description: string,
   status?: boolean,
-  date_start: string
+  date_start: string,
+  created_at: string,
 }
 
 export type ResponseNewsType = {

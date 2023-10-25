@@ -46,7 +46,6 @@ const FormModal: React.FC<Props> = (props) => {
     }
     const {success, user, message: messageRes} = await dispatch(actionSaveUser() as unknown as ResponseAuthType)
     if (success) {
-      console.log(user)
       dispatch(authUser({user, success: true}))
       message.success(<MessageList messages={messageRes}/>);
       dispatch(setIsShowModal({key: 'auth'}))

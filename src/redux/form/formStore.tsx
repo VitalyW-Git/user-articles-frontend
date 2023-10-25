@@ -16,7 +16,9 @@ type FormNewsType = {
   title: string,
   description: string,
   date_start?: string,
-  isShowModalNews?: boolean,
+  article_id?: string,
+  isShowModalCreate?: boolean,
+  isShowModalEdit?: boolean,
 }
 
 
@@ -36,7 +38,8 @@ const initialState: FormType = {
     title: '',
     description: '',
     date_start: '',
-    isShowModalNews: false,
+    isShowModalCreate: false,
+    isShowModalEdit: false,
   },
 }
 
@@ -45,7 +48,6 @@ export const FormStore = createSlice({
   initialState,
   reducers: {
     setPropertyForm: (state, {payload}) => {
-      console.log(payload)
       switch (payload.key) {
         case AuthUserEnum.username:
           state.formAuth.username = payload.value;
@@ -74,8 +76,11 @@ export const FormStore = createSlice({
         case 'auth':
           state.formAuth.isShowModal = !state.formAuth.isShowModal;
           break;
-        case 'news':
-          state.formNews.isShowModalNews = !state.formNews.isShowModalNews;
+        case 'createNews':
+          state.formNews.isShowModalCreate = !state.formNews.isShowModalCreate;
+          break;
+        case 'editNews':
+          state.formNews.isShowModalEdit = false;
           break;
         default:
           break;
@@ -88,12 +93,19 @@ export const FormStore = createSlice({
       state.formNews.title = ''
       state.formNews.description = ''
       state.formNews.date_start = ''
+      state.formNews.article_id = ''
 
+    },
+    fillProperty: (state, {payload}) => {
+      state.formNews.title = payload.title
+      state.formNews.description = payload.description
+      state.formNews.article_id = payload._id
+      state.formNews.isShowModalEdit = true
     }
   },
 });
 export const formSelector = (state: RootState) => state.form;
-export const {setPropertyForm, setIsShowModal, resetProperty} = FormStore.actions;
+export const {setPropertyForm, setIsShowModal, resetProperty, fillProperty} = FormStore.actions;
 
 /** AUTH start */
 export const actionSaveUser = (): AppThunk =>
@@ -108,13 +120,11 @@ export const actionSaveUser = (): AppThunk =>
       const {data, status} = await axios.post('/auth/registration',
         loginProperty
       );
-      console.log(data)
       if (status === (200 || 201) && data?.success) {
         return {user: data.user, message: data.message, success: data.success}
       }
       return {message: data.message, success: data.success}
     } catch (error: any) {
-      console.log(error)
       const {message, success} = error.response.data
       if (!success) {
         return {message, success: false}
@@ -134,7 +144,6 @@ export const actionAuthorizationUser = (): AppThunk =>
       const {data, status} = await axios.post('/auth/login',
         loginProperty
       );
-      console.log(data)
       if (status === (200 || 201) && data?.success) {
         return {user: data.user, message: data.message, success: data.success}
       }
@@ -179,6 +188,32 @@ export const actionCreateNews = (): AppThunk =>
       return {message: ['Ошибка при отправке данных'], success: false}
     }
   }
+
+export const actionEditNews = (): AppThunk =>
+  async (dispatch, getState): Promise<ResponseNewsType> => {
+    try {
+      const state: RootState = getState();
+      let loginProperty: FormNewsType = {
+        article_id: state.form.formNews.article_id,
+        title: state.form.formNews.title,
+        description: state.form.formNews.description
+      }
+      const {data, status} = await axios.patch('/news/update',
+        loginProperty
+      );
+      if (status === (200 || 201) && data?.success) {
+        return {news: data.news, message: data.message, success: data.success}
+      }
+      return {message: data.message, success: false}
+    } catch (error: any) {
+      const {message, success} = error.response.data
+      if (!success) {
+        return {message, success: false}
+      }
+      return {message: ['Ошибка при отправке данных'], success: false}
+    }
+  }
+
 /** NEWS end */
 
 export default FormStore.reducer;

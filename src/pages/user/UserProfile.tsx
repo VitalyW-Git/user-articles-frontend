@@ -1,17 +1,23 @@
 import React, {useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
-import {actionAllListNews, userSelector} from "../../redux/user/userStore";
+import {actionAllListNews, actionDeleteNews, userSelector} from "../../redux/user/userStore";
 import {NewsType} from "../../tupes/news/News.type";
-import {Button} from "antd";
+import {Button, Modal} from "antd";
 import Add from "../../components/add-news/Add";
+import FormNews from "../../components/add-news/form/FormNews";
+import {fillProperty, formSelector} from "../../redux/form/formStore";
+import {DeleteOutlined} from "@ant-design/icons";
 import _styles from "./UserProfile.module.scss";
+import _style from "../../components/add-news/Add.module.scss";
 
 
 const UserProfile: React.FC = () => {
   const {userNews, isLoading, user} = useAppSelector(userSelector)
-  const navigate = useNavigate();
+  const {formNews} = useAppSelector(formSelector)
+
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const fetchData = async () => {
     if (!isLoading && !user.isAuth) {
       navigate('/', { replace: true });
@@ -19,30 +25,38 @@ const UserProfile: React.FC = () => {
     }
     await dispatch(actionAllListNews());
   };
-  const edit = () => {
-    console.log(123)
+
+  const onDelete = async (item: NewsType) => {
+    await dispatch(actionDeleteNews(item))
   }
-  const listNews = userNews?.map((item: NewsType) => {
+
+  const listNews = userNews?.map((item: NewsType, index: number) => {
     const startDate = new Date(item.date_start);
     const publicDate = `${startDate.getHours()} ч. ${startDate.getMinutes()} мин. ${startDate.toLocaleDateString('ru-RU')}`
       return (
-        item.status && (
           <div key={item._id} className={_styles.article}>
             <div className={_styles.edit}>
-              <span className={_styles.title}>
-                {item.title}
-              </span>
-              <Button type="primary"
-                      onClick={() => edit()}>
-                Редактировать
-              </Button>
+              <div className={_styles.title}>
+                {!item.status && (<span className={_styles.title__marker}>Запись удалена</span>)}
+                <span className={_styles.title__name}>{item.title}</span>
+              </div>
+              <div className={_styles.edit__btn}>
+                <Button type="primary"
+                        onClick={() => dispatch(fillProperty(item))}
+                >
+                  Редактировать
+                </Button>
+                <DeleteOutlined
+                  style={{marginLeft: '10px', cursor: 'pointer', fontSize: '20px'}}
+                  onClick={() => onDelete(item)}
+                />
+              </div>
             </div>
             <span className={_styles.description} dangerouslySetInnerHTML={{ __html: item.description }} />
             <span className={_styles.date}>
               {publicDate}
             </span>
           </div>
-        )
       );
   });
 
@@ -57,6 +71,17 @@ const UserProfile: React.FC = () => {
           {listNews}
         </div>)
         : (<div className={_styles.info}>Созданных записей нет.</div>)}
+      <Modal
+        className={`${_style.modalForm} modalNews`}
+        title={"Редактирование"}
+        open={formNews.isShowModalEdit}
+        footer={[]}
+      >
+        <FormNews
+          isEdit={false}
+          nameCancel={'editNews'}
+        />
+      </Modal>
     </>
   )
 }
