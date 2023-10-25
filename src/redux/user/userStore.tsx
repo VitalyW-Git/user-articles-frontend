@@ -2,13 +2,15 @@ import {createSlice} from '@reduxjs/toolkit';
 import {UserType} from '../../tupes/user/User.type'
 import {AppThunk, RootState} from "../index";
 import axios from '../../lib/axios';
-import {NewsAllType} from "../../tupes/news/NewsAll.type";
+import {NewsType} from "../../tupes/news/News.type";
 
 type UserData = {
   user: UserType,
   isLoading: boolean,
-  userNews: NewsAllType[]
+  userNews: NewsType[]
 }
+
+type SortNews = Pick<NewsType, "created_at">;
 
 const initialState: UserData = {
   user: {username: '', email: '', isAuth: false},
@@ -25,12 +27,32 @@ export const UserStore = createSlice({
       state.isLoading = false;
     },
     userNews: (state, {payload}) => {
-      state.userNews = payload.news;
+      if (!payload.news?.length) {
+        return
+      }
+      state.userNews = payload.news?.sort((a: SortNews, b: SortNews) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     },
+    addNews: (state, {payload}) => {
+      state.userNews.unshift(payload)
+    },
+    updateNews: (state, {payload}) => {
+      state.userNews.forEach((item: NewsType, index: number) => {
+        if (item._id == payload._id) {
+          state.userNews[index] = payload
+        }
+      })
+    },
+    deleteNews: (state, {payload}) => {
+      state.userNews.forEach((item: NewsType, index: number) => {
+        if (item._id === payload._id) {
+          state.userNews[index].status = false
+        }
+      })
+    }
   },
 });
 export const userSelector = (state: RootState) => state.user;
-export const {authUser, userNews} = UserStore.actions;
+export const {authUser, userNews, addNews, updateNews, deleteNews} = UserStore.actions;
 
 export const actionAuthUser = (): AppThunk =>
   async (dispatch): Promise<void> => {
@@ -41,10 +63,8 @@ export const actionAuthUser = (): AppThunk =>
         return
       }
       dispatch(authUser({user: {username: '', email: ''}, success: false}));
-      console.log(data)
     } catch (error) {
       dispatch(authUser({user: {username: '', email: ''}, success: false}));
-      console.log(error)
     }
   }
 
@@ -56,9 +76,21 @@ export const actionAllListNews = (): AppThunk =>
         dispatch(userNews(data));
         return
       }
-      console.log(data)
     } catch (error) {
       console.log(error)
+    }
+  }
+
+export const actionDeleteNews = (news: NewsType): AppThunk =>
+  async (dispatch): Promise<{message: string[], success: boolean} | void> => {
+    try {
+      const {data, status} = await axios.delete(`/news/delete/${news._id}`);
+      if (status === (200 || 201) && data?.success) {
+        dispatch(deleteNews(news));
+        return
+      }
+    } catch (error) {
+      return {message: ['Ошибка при удалении'], success: false}
     }
   }
 

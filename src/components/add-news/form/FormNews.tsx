@@ -1,11 +1,22 @@
-import React, {useState} from "react";
-import {Button, DatePicker, Form, Input} from 'antd';
+import React, {useRef} from "react";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import _styles from './FormNews.module.scss'
-import {setPropertyForm} from "../../../redux/form/formStore";
-import {useAppDispatch} from "../../../hook/redux";
+import {Button, DatePicker, Form, Input, message, Space} from 'antd';
+import {
+  actionCreateNews,
+  actionEditNews,
+  formSelector, resetProperty,
+  setIsShowModal,
+  setPropertyForm
+} from "../../../redux/form/formStore";
+import {useAppDispatch, useAppSelector} from "../../../hook/redux";
 import {AuthUserEnumEnum} from "../../../enam/NewsFormEnum";
+import {ResponseNewsType} from "../../../tupes/news/News.type";
+import MessageList from "../../message/MessageList";
+import type { FormInstance } from 'antd/es/form';
+import {addNews, updateNews} from "../../../redux/user/userStore";
+
 
 const modules = {
   toolbar: [
@@ -26,7 +37,14 @@ const modules = {
   },
 }
 
-const FormNews: React.FC = () => {
+type Props = {
+  isEdit: boolean
+  nameCancel: string
+}
+
+const FormNews: React.FC<Props> = (props) => {
+  const {formNews} = useAppSelector(formSelector)
+  const formRef = useRef<FormInstance>(null);
   const [form] = Form.useForm();
   const dispatch = useAppDispatch();
 
@@ -35,7 +53,6 @@ const FormNews: React.FC = () => {
   }
 
   const onChangeDateStart = (value: any) => {
-    console.log(value)
     if (value == null) {
       dispatch(setPropertyForm({key: AuthUserEnumEnum.date_start, value: ''}))
       return
@@ -43,26 +60,54 @@ const FormNews: React.FC = () => {
     dispatch(setPropertyForm({key: AuthUserEnumEnum.date_start, value: value.toISOString()}))
   }
 
-  const onSaveUser = (values: any) => {
-    console.log('Success:', values);
+  const onSaveNews = async () => {
+    if (props.isEdit) {
+      const {news, message: messageRes, success} = await dispatch(actionCreateNews() as unknown as ResponseNewsType)
+      if (success) {
+        dispatch(addNews(news))
+        message.success(<MessageList messages={messageRes}/>);
+        onCancel()
+        return
+      }
+      message.error(<MessageList messages={messageRes}/>);
+      return
+    }
+    const {news, message: messageRes, success} = await dispatch(actionEditNews() as unknown as ResponseNewsType)
+    if (success) {
+      dispatch(updateNews(news))
+      message.success(<MessageList messages={messageRes}/>);
+      onCancel()
+      return
+    }
+    message.error(<MessageList messages={messageRes}/>);
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
 
+  const onCancel = () => {
+    dispatch(setIsShowModal({key: props.nameCancel}))
+    dispatch(resetProperty())
+    onReset()
+  }
+  const onReset = () => {
+    formRef.current?.resetFields();
+  };
+
   return (
     <Form
       className={`${_styles.form} formNews`}
       form={form}
-      name="basic"
+      ref={formRef}
+      name={`${props.nameCancel}_basic`}
       layout="vertical"
-      onFinish={onSaveUser}
+      onFinish={onSaveNews}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
       initialValues={{
-        title: '',
-        description: '',
+        title: formNews.title,
+        description: formNews.description,
         date_start: '',
       }}
     >
@@ -114,7 +159,7 @@ const FormNews: React.FC = () => {
           />
         </Form.Item>
       </div>
-      <div className={_styles.optionalFields}>
+      {props.isEdit && (<div className={_styles.optionalFields}>
         <Form.Item
           label="Дата публикации"
           name="date_start"
@@ -124,13 +169,24 @@ const FormNews: React.FC = () => {
             onChange={onChangeDateStart}
           />
         </Form.Item>
-      </div>
+      </div>)}
 
-      <Form.Item wrapperCol={{offset: 8, span: 16}}>
-        <Button type="primary" htmlType="submit">
-          Опубликовать
-        </Button>
-      </Form.Item>
+      <div style={{textAlign: 'right'}}>
+        <Form.Item shouldUpdate>
+          {() => (
+            <Space>
+              <Button type="primary"
+                      htmlType="submit"
+              >
+                Опубликовать
+              </Button>
+              <Button htmlType="button" onClick={() => onCancel()}>
+                Отмена
+              </Button>
+            </Space>
+          )}
+        </Form.Item>
+      </div>
     </Form>
   )
 }

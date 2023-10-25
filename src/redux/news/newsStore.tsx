@@ -1,12 +1,14 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from "../index";
 import axios from '../../lib/axios';
-import {NewsAllType} from "../../tupes/news/NewsAll.type";
+import {NewsType} from "../../tupes/news/News.type";
 
 type NewsLis = {
-  news: NewsAllType[]
+  news: NewsType[]
   successNews: boolean
 }
+
+type SortNews = Pick<NewsType, "created_at">;
 
 const initialState: NewsLis = {
   news: [],
@@ -18,7 +20,7 @@ export const NewsStore = createSlice({
   initialState,
   reducers: {
     listMews: (state, {payload}) => {
-      state.news = payload.news;
+      state.news = payload.news?.sort((a: SortNews, b: SortNews) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       state.successNews = payload.success;
     },
   },

@@ -15,6 +15,7 @@ body {
 .formNews .ant-form-item-label {
   padding: 0 !important;
 }
-.modalAuth .ant-modal-close {
+.modalAuth .ant-modal-close,
+.modalNews .ant-modal-close {
   display: none;
 }
