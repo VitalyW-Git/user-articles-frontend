@@ -3,6 +3,8 @@ import _styles from "./Button.module.scss"
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
 import {actionGetAllNews, newsSelector} from "../../redux/news/newsStore";
 import {NewsType} from "../../tupes/news/News.type";
+import {Button} from "antd";
+import axios from "../../lib/axios";
 
 
 
@@ -34,6 +36,17 @@ const Main: React.FC = () => {
       return null;
     }
   });
+
+  const sendTest1 = async () => {
+    const res = await axios.post('/post1/test')
+    console.log(res)
+  }
+
+  const sendTest2 = async () => {
+    const res = await axios.post('/post2/test')
+    console.log(res)
+  }
+
   useEffect(() => {
     fetchData()
   }, [])
@@ -42,6 +55,8 @@ const Main: React.FC = () => {
       {successNews
         ? (<div className={_styles.content}>
           {listNews}
+          <Button onClick={() => sendTest1()}> Для тест 1</Button>
+          <Button onClick={() => sendTest2()}> Для тест 2</Button>
         </div>)
         : (<div className={_styles.info}>Созданных записей нет. Для создания, пройдите регистрацию!</div>)}
     </>
