@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {useEffect} from "react";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import _styles from './FormNews.module.scss'
@@ -14,7 +14,6 @@ import {useAppDispatch, useAppSelector} from "../../../hook/redux";
 import {AuthUserEnumEnum} from "../../../enam/NewsFormEnum";
 import {ResponseNewsType} from "../../../tupes/news/News.type";
 import MessageList from "../../message/MessageList";
-import type { FormInstance } from 'antd/es/form';
 import {addNews, updateNews} from "../../../redux/user/userStore";
 
 
@@ -38,13 +37,12 @@ const modules = {
 }
 
 type Props = {
-  isEdit: boolean
-  nameCancel: string
+  isEdit: boolean,
+  nameCancel: string,
 }
 
 const FormNews: React.FC<Props> = (props) => {
   const {formNews} = useAppSelector(formSelector)
-  const formRef = useRef<FormInstance>(null);
   const [form] = Form.useForm();
   const dispatch = useAppDispatch();
 
@@ -82,34 +80,31 @@ const FormNews: React.FC<Props> = (props) => {
     message.error(<MessageList messages={messageRes}/>);
   };
 
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
-  };
-
   const onCancel = () => {
     dispatch(setIsShowModal({key: props.nameCancel}))
     dispatch(resetProperty())
-    onReset()
   }
-  const onReset = () => {
-    formRef.current?.resetFields();
+
+  const onFill = () => {
+    form.setFieldsValue({
+      title: formNews.title,
+      description: formNews.description,
+      date_start: '',
+    });
   };
+
+  useEffect(() => {
+    if (props.nameCancel === 'createNews' || !formNews.isShowModalEdit) return
+    onFill()
+  }, [formNews.isShowModalEdit])
 
   return (
     <Form
       className={`${_styles.form} formNews`}
       form={form}
-      ref={formRef}
-      name={`${props.nameCancel}_basic`}
+      name={`${props.nameCancel}_basic_${formNews.article_id}`}
       layout="vertical"
       onFinish={onSaveNews}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-      initialValues={{
-        title: formNews.title,
-        description: formNews.description,
-        date_start: '',
-      }}
     >
       <div className={_styles.requiredFields}>
         <Form.Item

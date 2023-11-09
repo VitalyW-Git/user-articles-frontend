@@ -4,7 +4,7 @@ import {Button, Modal} from "antd";
 import _style from "./Add.module.scss";
 import FormNews from "./form/FormNews";
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
-import {formSelector, setIsShowModal} from "../../redux/form/formStore";
+import {formSelector, setIsShowModal, resetProperty} from "../../redux/form/formStore";
 
 
 const Add: React.FC = () => {
@@ -16,7 +16,10 @@ const Add: React.FC = () => {
       <Button htmlType="button"
               className={_style.btnCreate}
               type="primary"
-              onClick={() => dispatch(setIsShowModal({key: 'createNews'}))}
+              onClick={() => {
+                dispatch(resetProperty());
+                dispatch(setIsShowModal({key: 'createNews'}))
+              }}
       >
         <span>Опубликовать</span>
         <PlusOutlined
