@@ -1,20 +1,26 @@
 import React from "react";
 import {PlusOutlined} from "@ant-design/icons";
 import {Button, Modal} from "antd";
-import _style from "./Add.module.scss";
-import FormNews from "./form/FormNews";
+import FormNews from "../ui/form/FormNews";
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
 import {formSelector, setIsShowModal, resetProperty} from "../../redux/form/formStore";
-
+import _styles from "./Add.module.scss";
+const MemoFormNews = React.memo(FormNews);
 
 const Add: React.FC = () => {
   const {formNews} = useAppSelector(formSelector)
   const dispatch = useAppDispatch();
 
+  /*const openAddArticle = useCallback(async () => {
+    dispatch(resetProperty());
+    dispatch(setIsShowModal({key: 'createNews'}))
+  }, [])*/
+
+  console.log('Add')
   return (
     <>
       <Button htmlType="button"
-              className={_style.btnCreate}
+              className={_styles.btnCreate}
               type="primary"
               onClick={() => {
                 dispatch(resetProperty());
@@ -28,12 +34,12 @@ const Add: React.FC = () => {
         />
       </Button>
       <Modal
-        className={`${_style.modalForm} modalNews`}
+        className={`${_styles.modalForm} modalNews`}
         title={"Публикация"}
         open={formNews.isShowModalCreate}
         footer={[]}
       >
-        <FormNews
+        <MemoFormNews
           isEdit={true}
           nameCancel={'createNews'}
         />

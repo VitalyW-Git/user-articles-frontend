@@ -1,12 +1,12 @@
 import React from "react";
-import _style from "./Header.module.scss"
-import {Button, Avatar, Dropdown, Spin} from "antd";
-import type {MenuProps} from 'antd';
-import {UserOutlined} from '@ant-design/icons';
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
 import {setIsShowModal} from "../../redux/form/formStore";
 import Registration from "../regisration/Registration";
 import {userSelector} from "../../redux/user/userStore";
+import type {MenuProps} from 'antd';
+import {UserOutlined} from '@ant-design/icons';
+import {Button, Avatar, Dropdown, Spin} from "antd";
+import _styles from "./Header.module.scss"
 
 const items: MenuProps['items'] = [
   {
@@ -25,7 +25,7 @@ const Header: React.FC = () => {
   const dispatch = useAppDispatch();
   return (
     <>
-      <div className={_style.header}>
+      <div className={_styles.header}>
         {isLoading && (<Spin size="large"/>)}
         {!isLoading && !user.isAuth && (
           <>
@@ -37,9 +37,9 @@ const Header: React.FC = () => {
           </>)}
         {!isLoading && user.isAuth && (
           <Dropdown menu={{items}} placement="bottomRight" arrow={{pointAtCenter: true}}>
-            <div className={_style.avatar}>
+            <div className={_styles.avatar}>
               <Avatar size="large" icon={<UserOutlined/>}/>
-              <span className={_style.avatar__title}>
+              <span className={_styles.avatar__title}>
               {user.username}
             </span>
             </div>

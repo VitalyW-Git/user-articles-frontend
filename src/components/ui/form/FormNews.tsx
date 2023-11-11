@@ -45,7 +45,7 @@ const FormNews: React.FC<Props> = (props) => {
   const {formNews} = useAppSelector(formSelector)
   const [form] = Form.useForm();
   const dispatch = useAppDispatch();
-
+  console.log('FormNews')
   const onChangeText = (value: string) => {
     dispatch(setPropertyForm({key: AuthUserEnumEnum.description, value}))
   }
@@ -175,7 +175,9 @@ const FormNews: React.FC<Props> = (props) => {
               >
                 Опубликовать
               </Button>
-              <Button htmlType="button" onClick={() => onCancel()}>
+              <Button htmlType="button"
+                      onClick={() => onCancel()}
+              >
                 Отмена
               </Button>
             </Space>

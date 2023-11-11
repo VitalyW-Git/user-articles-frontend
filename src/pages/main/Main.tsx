@@ -1,62 +1,24 @@
-import React, {useEffect} from "react";
-import _styles from "./Button.module.scss"
+import React, {useLayoutEffect} from "react";
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
 import {actionGetAllNews, newsSelector} from "../../redux/news/newsStore";
-import {NewsType} from "../../tupes/news/News.type";
-import {Button} from "antd";
-import axios from "../../lib/axios";
-
-
+import AllNews from "../../components/list-news/AllNews";
+import _styles from "./Main.module.scss"
 
 const Main: React.FC = () => {
-  const {news, successNews} = useAppSelector(newsSelector)
+  const {successNews} = useAppSelector(newsSelector)
   const dispatch = useAppDispatch();
-  const fetchData = async () => {
-    await dispatch(actionGetAllNews());
-  };
-  const listNews = news?.map((item: NewsType) => {
-    const startDate = new Date(item.date_start);
-    const currentDate = new Date();
-    const publicDate = `${startDate.getHours()} ч. ${startDate.getMinutes()} мин. ${startDate.toLocaleDateString('ru-RU')}`
-    if (currentDate > startDate) {
-      return (
-        item.status && (
-          <div key={item._id} className={_styles.article}>
-          <span className={_styles.title}>
-            {item.title}
-          </span>
-            <span className={_styles.description} dangerouslySetInnerHTML={{ __html: item.description }} />
-            <span className={_styles.date}>
-              {publicDate}
-            </span>
-          </div>
-        )
-      );
-    } else {
-      return null;
-    }
-  });
 
-  const sendTest1 = async () => {
-    const res = await axios.post('/post1/test')
-    console.log(res)
-  }
-
-  const sendTest2 = async () => {
-    const res = await axios.post('/post2/test')
-    console.log(res)
-  }
-
-  useEffect(() => {
-    fetchData()
+  useLayoutEffect(() => {
+    (async () => {
+      await dispatch(actionGetAllNews());
+    })()
   }, [])
+
   return (
     <>
       {successNews
         ? (<div className={_styles.content}>
-          {listNews}
-          <Button onClick={() => sendTest1()}> Для тест 1</Button>
-          <Button onClick={() => sendTest2()}> Для тест 2</Button>
+          <AllNews />
         </div>)
         : (<div className={_styles.info}>Созданных записей нет. Для создания, пройдите регистрацию!</div>)}
     </>

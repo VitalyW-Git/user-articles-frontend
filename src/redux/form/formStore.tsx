@@ -120,7 +120,7 @@ export const actionSaveUser = (): AppThunk =>
       const {data, status} = await axios.post('/auth/registration',
         loginProperty
       );
-      if (status === (200 || 201) && data?.success) {
+      if ([200, 201].includes(status) && data?.success) {
         return {user: data.user, message: data.message, success: data.success}
       }
       return {message: data.message, success: data.success}
@@ -144,7 +144,7 @@ export const actionAuthorizationUser = (): AppThunk =>
       const {data, status} = await axios.post('/auth/login',
         loginProperty
       );
-      if (status === (200 || 201) && data?.success) {
+      if ([200, 201].includes(status) && data?.success) {
         return {user: data.user, message: data.message, success: data.success}
       }
       return {message: data.message, success: false}
@@ -176,7 +176,7 @@ export const actionCreateNews = (): AppThunk =>
       const {data, status} = await axios.post('/news/create',
         loginProperty
       );
-      if (status === (200 || 201) && data?.success) {
+      if ([200, 201].includes(status) && data?.success) {
         return {news: data.news, message: data.message, success: data.success}
       }
       return {message: data.message, success: false}
@@ -201,7 +201,7 @@ export const actionEditNews = (): AppThunk =>
       const {data, status} = await axios.patch('/news/update',
         loginProperty
       );
-      if (status === (200 || 201) && data?.success) {
+      if ([200, 201].includes(status) && data?.success) {
         return {news: data.news, message: data.message, success: data.success}
       }
       return {message: data.message, success: false}

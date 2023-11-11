@@ -3,7 +3,7 @@ import {Modal} from "antd";
 import FormModal from "./FormModal";
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
 import {formSelector, resetProperty} from "../../redux/form/formStore";
-import _style from "./Registration.module.scss"
+import _styles from "./Registration.module.scss"
 
 
 const Registration: React.FC = () => {
@@ -30,7 +30,7 @@ const Registration: React.FC = () => {
 
   return (
     <Modal
-      className={`${_style.modalForm} modalAuth`}
+      className={`${_styles.modalForm} modalAuth`}
       title={isStateForm ? "Войти" : "Регистрация"}
       open={formAuth.isShowModal}
       footer={[]}
@@ -40,7 +40,7 @@ const Registration: React.FC = () => {
         isStateForm={isStateForm}
         onChange={() => resetStateForm()}
       />
-      <span className={_style.authUser} onClick={() => changeStateForm()}>{isStateForm ? "Регистрация" : "Войти"}</span>
+      <span className={_styles.authUser} onClick={() => changeStateForm()}>{isStateForm ? "Регистрация" : "Войти"}</span>
     </Modal>
   )
 }

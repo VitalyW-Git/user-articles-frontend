@@ -33,7 +33,7 @@ export const actionGetAllNews = (): AppThunk =>
   async (dispatch): Promise<void> => {
     try {
       const {data, status} = await axios.get('news/get-all');
-      if (status === (200 || 201) && data?.success) {
+      if ([200, 201].includes(status) && data?.success) {
         dispatch(listMews(data));
         return
       }

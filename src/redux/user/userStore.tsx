@@ -23,7 +23,10 @@ export const UserStore = createSlice({
   initialState,
   reducers: {
     authUser: (state, {payload}) => {
-      state.user = {...payload.user, isAuth: payload.success};
+      state.user = {
+        ...payload.user,
+        isAuth: payload.success
+      };
       state.isLoading = false;
     },
     userNews: (state, {payload}) => {
@@ -54,11 +57,11 @@ export const UserStore = createSlice({
 export const userSelector = (state: RootState) => state.user;
 export const {authUser, userNews, addNews, updateNews, deleteNews} = UserStore.actions;
 
-export const actionAuthUser = (): AppThunk =>
+export const actionCheckAuthUser = (): AppThunk =>
   async (dispatch): Promise<void> => {
     try {
       const {data, status} = await axios.post('/user/check-user');
-      if (status === (200 || 201) && data?.success) {
+      if ([200, 201].includes(status) && data?.success) {
         dispatch(authUser(data));
         return
       }
@@ -72,7 +75,7 @@ export const actionAllListNews = (): AppThunk =>
   async (dispatch): Promise<void> => {
     try {
       const {data, status} = await axios.get('/user/news');
-      if (status === (200 || 201) && data?.success) {
+      if ([200, 201].includes(status) && data?.success) {
         dispatch(userNews(data));
         return
       }
@@ -85,7 +88,7 @@ export const actionDeleteNews = (news: NewsType): AppThunk =>
   async (dispatch): Promise<{message: string[], success: boolean} | void> => {
     try {
       const {data, status} = await axios.delete(`/news/delete/${news._id}`);
-      if (status === (200 || 201) && data?.success) {
+      if ([200, 201].includes(status) && data?.success) {
         dispatch(deleteNews(news));
         return
       }

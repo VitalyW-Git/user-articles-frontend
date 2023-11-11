@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from "react";
-import _style from "./Registration.module.scss"
+import _styles from "./Registration.module.scss"
 import {Button, Form, Input, Space, message} from 'antd';
 import {useAppDispatch} from "../../hook/redux";
 import {
@@ -72,7 +72,7 @@ const FormModal: React.FC<Props> = (props) => {
 
   return (
     <Form
-      className={`${_style.form}, formAuth`}
+      className={`${_styles.form}, formAuth`}
       form={form}
       ref={formRef}
       name="basic"
@@ -84,7 +84,7 @@ const FormModal: React.FC<Props> = (props) => {
       initialValues={props.formProperty}
     >
       {!props.isStateForm && (<Form.Item
-        className={_style.form__username}
+        className={_styles.form__username}
         label="Имя"
         name={AuthUserEnum.username}
         rules={[
@@ -106,7 +106,7 @@ const FormModal: React.FC<Props> = (props) => {
       </Form.Item>)}
 
       <Form.Item
-        className={_style.form__email}
+        className={_styles.form__email}
         label="E-mail"
         name={AuthUserEnum.email}
         rules={[
@@ -127,7 +127,7 @@ const FormModal: React.FC<Props> = (props) => {
       </Form.Item>
 
       <Form.Item
-        className={_style.form__password}
+        className={_styles.form__password}
         label="Пароль"
         name={AuthUserEnum.password}
         rules={[

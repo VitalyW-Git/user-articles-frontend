@@ -1,0 +1,48 @@
+.article {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 11px;
+  box-shadow: 1px 1px 15px rgba(0,0,0,0);
+  padding: 13px 20px;
+  &:hover {
+    box-shadow: 1px 1px 15px rgba(0,0,0,.1);
+    transition: all .3s ease;
+  }
+  .description {
+    margin-top: 5px;
+    font-size: 16px;
+  }
+  .date {
+    font-size: 14px;
+    text-align: right;
+    color: #9e9e9e;
+  }
+  .edit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .title {
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      &__marker {
+        border-radius: 10px;
+        background: #f35a5a;
+        color: #fff;
+        padding: 5px;
+        text-align: center;
+      }
+      &__name {
+        font-size: 18px;
+        font-weight: 600;
+        text-decoration: underline;
+      }
+    }
+    &__btn {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
