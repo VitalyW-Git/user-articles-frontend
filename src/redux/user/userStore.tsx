@@ -62,25 +62,31 @@ export const actionCheckAuthUser = (): AppThunk =>
     try {
       const {data, status} = await axios.post('/user/check-user');
       if ([200, 201].includes(status) && data?.success) {
-        dispatch(authUser(data));
+        await dispatch(authUser(data));
+        console.log('dispatch1')
         return
       }
-      dispatch(authUser({user: {username: '', email: ''}, success: false}));
+      console.log('dispatch2')
+      await dispatch(authUser({user: {username: '', email: ''}, success: false}));
     } catch (error) {
-      dispatch(authUser({user: {username: '', email: ''}, success: false}));
+      await dispatch(authUser({user: {username: '', email: ''}, success: false}));
     }
   }
 
 export const actionAllListNews = (): AppThunk =>
-  async (dispatch): Promise<void> => {
+  async (dispatch): Promise<{message: string[], success: boolean} | void> => {
     try {
       const {data, status} = await axios.get('/user/news');
       if ([200, 201].includes(status) && data?.success) {
-        dispatch(userNews(data));
+        await dispatch(userNews(data));
         return
       }
-    } catch (error) {
+    } catch (error: any) {
+      const {status, data} = error.response
       console.log(error)
+      if ([400, 401].includes(status) || data.isAuth) {
+        return {message: ['Пользователь не авторизован'], success: data.success}
+      }
     }
   }
 
@@ -89,7 +95,7 @@ export const actionDeleteNews = (news: NewsType): AppThunk =>
     try {
       const {data, status} = await axios.delete(`/news/delete/${news._id}`);
       if ([200, 201].includes(status) && data?.success) {
-        dispatch(deleteNews(news));
+        await dispatch(deleteNews(news));
         return
       }
     } catch (error) {

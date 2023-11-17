@@ -23,6 +23,7 @@ const items: MenuProps['items'] = [
 const Header: React.FC = () => {
   const {user, isLoading} = useAppSelector(userSelector)
   const dispatch = useAppDispatch();
+  console.log('Header')
   return (
     <>
       <div className={_styles.header}>

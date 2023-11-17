@@ -5,16 +5,10 @@ import FormNews from "../ui/form/FormNews";
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
 import {formSelector, setIsShowModal, resetProperty} from "../../redux/form/formStore";
 import _styles from "./Add.module.scss";
-const MemoFormNews = React.memo(FormNews);
 
 const Add: React.FC = () => {
   const {formNews} = useAppSelector(formSelector)
   const dispatch = useAppDispatch();
-
-  /*const openAddArticle = useCallback(async () => {
-    dispatch(resetProperty());
-    dispatch(setIsShowModal({key: 'createNews'}))
-  }, [])*/
 
   console.log('Add')
   return (
@@ -39,7 +33,7 @@ const Add: React.FC = () => {
         open={formNews.isShowModalCreate}
         footer={[]}
       >
-        <MemoFormNews
+        <FormNews
           isEdit={true}
           nameCancel={'createNews'}
         />

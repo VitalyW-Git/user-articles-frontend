@@ -29,7 +29,7 @@ const AllNews = () => {
       return null;
     }
   });
-
+  console.log('AllNews')
   return (
     <>
       {listNews}

@@ -1,5 +1,5 @@
-import React, {useLayoutEffect, useMemo} from "react";
-import { useNavigate } from 'react-router-dom';
+import React, {useLayoutEffect, useMemo, useRef} from "react";
+import {useLocation, useNavigate} from 'react-router-dom';
 import {Modal} from "antd";
 import {useAppDispatch, useAppSelector} from "../../hook/redux";
 import {actionAllListNews, userSelector} from "../../redux/user/userStore";
@@ -15,15 +15,6 @@ const UserProfile: React.FC = () => {
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  /*const openAddArticle = useCallback(async () => {
-    if (!isLoading && !user.isAuth) {
-      navigate('/', { replace: true });
-      return
-    }
-    await dispatch(actionAllListNews());
-  }, [isLoading])*/
-
   useLayoutEffect(() => {
     (async () => {
       if (!isLoading && !user.isAuth) {
@@ -36,13 +27,14 @@ const UserProfile: React.FC = () => {
   }, [isLoading])
 
   const MemoizedAdd = useMemo(() => <Add />, []);
+  const MemoizedNews = useMemo(() => <News />, []);
 
   return (
     <>
       {MemoizedAdd}
       {userNews.length
         ? (<div className={_styles.content}>
-          <News />
+          {MemoizedNews}
         </div>)
         : (<div className={_styles.info}>Созданных записей нет.</div>)}
       <Modal
